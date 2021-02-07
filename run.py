@@ -2,7 +2,6 @@ import praw
 from praw.exceptions import APIException
 import configparser
 
-
 config = configparser.ConfigParser()
 config.read('conf.ini')
 reddit_user = config['REDDIT']['reddit_user']
@@ -23,22 +22,27 @@ reddit = praw.Reddit(
     user_agent='Crosspost Bot (by u/impshum)'
 )
 
-try:
-    for submission in reddit.subreddit(source_subreddit).stream.submissions():
-        for target_subreddit in target_subreddits:
-            if not test_mode:
-                post_allowed = False
-                if submission.is_self and crosspost_text_posts:
-                    post_allowed = True
-                elif not submission.is_self and crosspost_link_posts:
-                    post_allowed = True
-                if post_allowed:
-                    new_post_id = submission.crosspost(subreddit=target_subreddit, send_replies=False)
-                    print(f'posted: {new_post_id}')
-            else:
-                print(f'TEST MODE - {submission.id}')
 
-except APIException as e:
-    print(f'Something broke with PRAW: {e}')
-except Exception as e:
-    print(f'Something else broke: {e}')
+def main():
+    try:
+        for submission in reddit.subreddit(source_subreddit).stream.submissions():
+            for target_subreddit in target_subreddits:
+                if not test_mode:
+                    post_allowed = False
+                    if submission.is_self and crosspost_text_posts:
+                        post_allowed = True
+                    elif not submission.is_self and crosspost_link_posts:
+                        post_allowed = True
+                    if post_allowed:
+                        new_post_id = submission.crosspost(subreddit=target_subreddit, send_replies=False)
+                        print(f'posted: {new_post_id}')
+                else:
+                    print(f'TEST MODE - {submission.id}')
+    except APIException as e:
+        print(f'Something broke with PRAW: {e}')
+    except Exception as e:
+        print(f'Something else broke: {e}')
+
+
+if __name__ == '__main__':
+    main()
