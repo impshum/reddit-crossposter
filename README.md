@@ -1,6 +1,6 @@
 ## reddit-crossposter
 
-Crossposts 
+Crossposts submissions from one (or multiple) subreddits to another.
 
 ### Instructions
 
